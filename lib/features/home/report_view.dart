@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'home_provider.dart';
+import '../../features/home/home_provider.dart';
+import 'widgets/day_card.dart';
+
 
 class ReportView extends StatefulWidget {
   @override
@@ -121,10 +123,12 @@ class _ReportViewState extends State<ReportView> {
                 itemBuilder: (context, index) {
                   final day = displayList[index];
 
-                  return ListTile(
-                    title: Text(day.date),
-                    subtitle: Text("ساعات: ${day.hours}"),
-                    trailing: Text("${day.total}"),
+                  return DayCard(
+                    date: day.date,
+                    hours: day.hours,
+                    rate: day.rate,
+                    total: day.total,
+                    onDelete: () {},
                   );
                 },
               ),

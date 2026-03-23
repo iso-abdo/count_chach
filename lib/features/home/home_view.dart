@@ -18,29 +18,33 @@ class _HomePageState extends State<HomePage> {
 
   DateTime selectedDate = DateTime.now();
   // 🔥 حساب اليومية
-  double calculateDaily(double hours, double rate) {
-    if (hours <= 8) {
-      return hours * rate;
-    } else {
-      double normal = 8 * rate;
-      double overtime = (hours - 8) * rate * 1.5;
-      return normal + overtime;
-    }
-  }
-
   void handleCalculate() {
     double hours = double.tryParse(hoursController.text) ?? 0;
     double rate = double.tryParse(rateController.text) ?? 0;
 
+    final provider = Provider.of<HomeProvider>(context, listen: false);
+
     setState(() {
-      result = calculateDaily(hours, rate);
+      result = provider.calculateDaily(hours, rate);
     });
   }
+  @override
+  void initState() {
+    super.initState();
+
+    final provider = Provider.of<HomeProvider>(context, listen: false);
+
+    hoursController.text = provider.defaultHours.toString();
+    rateController.text = provider.defaultRate.toString();
+  }
+
 
   void handleReset() {
+    final provider = Provider.of<HomeProvider>(context, listen: false);
+
     setState(() {
-      hoursController.clear();
-      rateController.clear();
+      hoursController.text = provider.defaultHours.toString();
+      rateController.text = provider.defaultRate.toString();
       result = 0;
     });
   }
@@ -77,6 +81,14 @@ class _HomePageState extends State<HomePage> {
 
     // ✅ هنا المكان الصح
     final provider = Provider.of<HomeProvider>(context);
+    /*if (hoursController.text.isEmpty) {
+      hoursController.text = provider.defaultHours.toString();
+    }
+
+    if (rateController.text.isEmpty) {
+      rateController.text = provider.defaultRate.toString();
+    }*/
+
 
     return Scaffold(
       appBar: AppBar(
@@ -153,7 +165,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 10),
 
             if (double.tryParse(hoursController.text) != null &&
-                double.tryParse(hoursController.text)! > 8)
+                double.tryParse(hoursController.text)! > provider.defaultHours)
               Text(
                 "فيه أوفر تايم 🔥",
                 style: TextStyle(
