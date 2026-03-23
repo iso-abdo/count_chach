@@ -1,126 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'features/home/home_provider.dart';
+import 'features/home/home_view.dart';
+import 'features/home/report_view.dart';
+import 'features/home/settings_view.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) {
+            final provider = HomeProvider();
+            provider.loadData(); // 🔥 دي أهم سطر
+            return provider;
+          },
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: MainLayout(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class MainLayout extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _MainLayoutState createState() => _MainLayoutState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _MainLayoutState extends State<MainLayout> {
 
-  final TextEditingController hoursController = TextEditingController();
-  final TextEditingController rateController = TextEditingController();
+  int currentIndex = 0;
 
-  double result = 0;
-
-  // 🔥 دالة حساب اليومية (مع أوفر تايم)
-  double calculateDaily(double hours, double rate) {
-    if (hours <= 8) {
-      return hours * rate;
-    } else {
-      double normal = 8 * rate;
-      double overtime = (hours - 8) * rate * 1.5;
-      return normal + overtime;
-    }
-  }
-
-  void handleCalculate() {
-    double hours = double.tryParse(hoursController.text) ?? 0;
-    double rate = double.tryParse(rateController.text) ?? 0;
-
-    setState(() {
-      result = calculateDaily(hours, rate);
-    });
-  }
-
-  // دالة إعادة الضبط (التصفير)
-  void handleReset() {
-    setState(() {
-      hoursController.clear();
-      rateController.clear();
-      result = 0;
-    });
-  }
+  final List<Widget> screens = [
+    HomePage(),
+    ReportView(),
+    SettingsView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("حساب اليومية",style: TextStyle(
-        color: Colors.red,
-        backgroundColor: Colors.blueAccent,
-        fontWeight: FontWeight.bold,
-          fontSize: 20,
-        ),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
+      body: screens[currentIndex],
 
-            TextField(
-              controller: hoursController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "عدد الساعات",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            SizedBox(height: 20),
-
-            TextField(
-              controller: rateController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                labelText: "سعر الساعة",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            SizedBox(height: 20),
-
-            ElevatedButton(
-              onPressed: handleCalculate,
-              child: Text("احسب"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-            ),
-
-            SizedBox(height: 30),
-
-            ElevatedButton(
-              onPressed: handleReset,
-              child: Text("تصفير"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-            ),
-
-        SizedBox(height: 30),
-            Text(
-              "اليومية: $result",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: result > 0 ? Colors.green : Colors.black,
-              ),
-            ),
-
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: currentIndex,
+        onTap: (index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: "اليومية",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bar_chart),
+            label: "التقارير",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: "الإعدادات",
+          ),
+        ],
       ),
     );
   }
