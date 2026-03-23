@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.red,
         backgroundColor: Colors.blueAccent,
         fontWeight: FontWeight.bold,
+          fontSize: 30,
         ),
         ),
         centerTitle: true,
