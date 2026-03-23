@@ -46,6 +46,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  // دالة إعادة الضبط (التصفير)
+  void handleReset() {
+    setState(() {
+      hoursController.clear();
+      rateController.clear();
+      result = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,6 +63,7 @@ class _HomePageState extends State<HomePage> {
         color: Colors.red,
         backgroundColor: Colors.blueAccent,
         fontWeight: FontWeight.bold,
+          fontSize: 20,
         ),
         ),
         centerTitle: true,
@@ -88,10 +98,18 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: handleCalculate,
               child: Text("احسب"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
             ),
 
             SizedBox(height: 30),
 
+            ElevatedButton(
+              onPressed: handleReset,
+              child: Text("تصفير"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            ),
+
+        SizedBox(height: 30),
             Text(
               "اليومية: $result",
               style: TextStyle(
@@ -100,6 +118,7 @@ class _HomePageState extends State<HomePage> {
                 color: result > 0 ? Colors.green : Colors.black,
               ),
             ),
+
           ],
         ),
       ),
